@@ -88,17 +88,76 @@ public class SkipList<K,V> implements SimpleMap<K,V> {
 
   @Override
   public V set(K key, V value) {
-    // TODO Auto-generated method stub
-    return null;
+    if (key == null) {
+    	throw new NullPointerException("null key");
+    }else {
+    	ArrayList<SLNode<K,V>> currentPointer = this.front;    	
+    	for (int i = this.height - 1; i >= 0; i--) {
+    		K nextKey = currentPointer.get(i).next.get(i).key;
+    		//if this level has no other element, move down
+    		if (nextKey == null) {
+    			break;
+    		}
+    		//while the next node is smaller keep moving at higher level
+    		while (this.comparator.compare(nextKey, key) < 0) {
+    			currentPointer = currentPointer.get(i).next;
+    		}   		
+    	}
+    	//when nextKey >= key
+    	//if nextKey = key
+    	currentPointer = currentPointer.get(1).next;
+    	if (this.comparator.compare(currentPointer.get(1).key, key) == 0) {
+    		V temp = currentPointer.get(1).value;
+    		currentPointer.get(1).value = value;
+    		return temp;
+    	//when the key does not exist, make new node
+    	} else {
+    		int newHeight =  randomHeight();
+    		SLNode<K,V> newNode = new SLNode<K,V>(key, value,newHeight);
+    		if (newHeight > height) {
+    			//update the front pointer to connect to the new node
+    			for (int i = height ; i < newHeight; i++) {
+    				this.front.set(i,newNode);
+    			}
+    			this.height = newHeight;
+    		}
+    		//connect the new node to the rest
+    		for(int i = 0; i < height; i++) {
+    			newNode.next.set(i, currentPointer.get(i).next.get(i));
+    			currentPointer.get(i).next.set(i, newNode);
+    		}
+    		return null;
+    	}
+    }
   } // set(K,V)
 
   @Override
   public V get(K key) {
     if (key == null) {
       throw new NullPointerException("null key");
-    } // if
-    // TODO Auto-generated method stub
-    return null;
+    } else {
+    	ArrayList<SLNode<K,V>> currentPointer = this.front;    	
+    	for (int i = this.height - 1; i >= 0; i--) {
+    		K nextKey = currentPointer.get(i).next.get(i).key;
+    		//if this level has no other element, move down
+    		if (nextKey == null) {
+    			break;
+    		}
+    		//while the next node is smaller keep moving at higher level
+    		while (this.comparator.compare(nextKey, key) < 0) {
+    			currentPointer = currentPointer.get(i).next;
+    		}   		
+    	}
+    	//when nextKey >= key
+    	//if nextKey = key
+    	currentPointer = currentPointer.get(1).next;
+    	if (this.comparator.compare(currentPointer.get(1).key, key) == 0) {
+    		return currentPointer.get(1).value;
+    	//when the key does not exist, throw an exception
+    	} else {
+    		throw new IndexOutOfBoundsException("key not found");
+    	}
+    }
   } // get(K,V)
 
   @Override
