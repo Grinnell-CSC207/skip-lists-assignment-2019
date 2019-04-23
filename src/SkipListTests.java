@@ -1,4 +1,4 @@
-import java.io.PrintWriter;
+//import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -6,7 +6,10 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import java.lang.Integer;
+<<<<<<< HEAD
 
+=======
+>>>>>>> ffc6a028dfef09175f74ad3f8599c51bf09bbfb3
 /**
  * Some tests of skip lists.
  *
@@ -25,6 +28,12 @@ public class SkipListTests {
       {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
           "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
           "sixteen", "seventeen", "eighteen", "nineteen"};
+
+  /**
+   * An array of strings for tests
+   */
+    static final String alphaRef[]= {"ace", "apple", "baboon","caterpillar","donkey"
+      ,"elephant","fish","goat", "gator", "hippo","iguana", "joker","lizard","man"};
 
   /**
    * Names of more numbers.
@@ -71,7 +80,7 @@ public class SkipListTests {
     this.ints = new SkipList<Integer, String>((i, j) -> i - j);
     this.strings = new SkipList<String, String>((s, t) -> s.compareTo(t));
     this.operations = new ArrayList<String>();
-    System.err.println("SETUP");
+    System.err.println("SETUP"); 
   } // setup
 
   /**
@@ -222,7 +231,99 @@ public class SkipListTests {
     setup();
     assertFalse(strings.containsKey("hello"));
   } // emptyTest()
+  
+  ///ADDED 23/4 
+  @Test
+  public void stringOrderTest() {
+   // SkipList<String, String> reference= new 
+    setup();
+    for (int i=0; i<alphaRef.length;i++) {
+    strings.set(alphaRef[i], value(alphaRef[i]));
+    }
+    if (!inOrder(strings.keys())) {
+      System.err.println("inOrder() failed in testOrdered()");
+      printTest();
+      dump(ints);
+      System.err.println();
+      fail("The instructions did not produce a sorted list.");
+    } // if the elements are not in order.
+    
+  } // stringOrderTest()
+ 
 
+  ///ADDED 23/4 
+  @Test
+  public void stringRandomAdd() {
+   // SkipList<String, String> reference= new 
+    setup();
+    int rand, j;
+    for (int i=0; i<20;i++) {
+      rand=random.nextInt();
+      j=rand%(alphaRef.length);
+    strings.set(alphaRef[j], value(alphaRef[j]));
+    }
+    if (!inOrder(strings.keys())) {
+      System.err.println("inOrder() failed in stringRandomAdd()");
+      printTest();
+      dump(ints);
+      System.err.println();
+      fail("The instructions did not produce a sorted list.");
+    }
+    // if the elements are not in order.
+    
+  } // stringOrderTest()
+  
+  //ADDED 23/4
+  /**
+   * An extensive randomized test for strings.
+   */
+  @Test
+  public void randomStringTest() {
+    setup();
+    // Keep track of the values that are currently in the sorted list.
+    ArrayList<String> keys = new ArrayList<String>();
+
+    // Add a bunch of values
+    boolean ok = true;
+    for (int i = 0; ok && i < 50; i++) {
+      int rand = random.nextInt();
+      int j=rand%(alphaRef.length);
+      // Half the time we add
+      if (random.nextBoolean()) {
+        if (!strings.containsKey(alphaRef[j])) {
+          set(alphaRef[j]);
+        } // if it's not already there.
+        if (!ints.containsKey(rand)) {
+          log("After adding " + alphaRef[j] + ", contains(" + alphaRef[j] +") fails");
+          ok = false;
+        } // if (!ints.contains(alphaRef[j]))
+      } // if we add
+      // Half the time we remove
+      else {
+       strings.remove(alphaRef[j]);
+        keys.remove(alphaRef[j]);
+        if (strings.containsKey(alphaRef[j])) {
+          log("After removing " + alphaRef[j] + ", contains(" +alphaRef[j]+") succeeds");
+          ok = false;
+        } // if ints.contains(rand)
+      } // if we remove
+      // See if all of the appropriate elements are still there
+      for (String key: keys) {
+        if (!strings.containsKey(key)) {
+          log("ints no longer contains " + key);
+          ok = false;
+          break;
+        } // if the value is no longer contained
+      } // for each key
+    } // for i
+    // Dump the instructions if we've encountered an error
+    if (!ok) {
+      printTest();
+      dump(strings);
+      fail("Operations failed");
+    } // if (!ok)
+  } // randomTest()
+ 
   // +-----------------+-------------------------------------------------
   // | RandomizedTests |
   // +-----------------+
