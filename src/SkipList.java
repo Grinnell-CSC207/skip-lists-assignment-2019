@@ -231,12 +231,62 @@ public class SkipList<K,V> implements SimpleMap<K,V> {
   // | Other public methods |
   // +----------------------+
 
+
   /**
-   * Dump the tree to some output location.
+   * Dump the list to some output location.
    */
   public void dump(PrintWriter pen) {
-    // Forthcoming
+    String leading = "          ";
+ 
+    SLNode<K, V> current = front.get(0);
+   
+    // Print some X's at the start
+    pen.print(leading);
+    for (int level = 0; level < this.height; level++) {
+      pen.print(" X");
+    } // for
+    pen.println();
+    printLinks(pen, leading);
+
+    while (current != null) {
+      // Print out the key as a fixed-width field.
+      // (There's probably a better way to do this.)
+      String str;
+      if (current.key == null) {
+        str = "<null>";
+      } else {
+        str = current.key.toString();
+      } // if/else
+      if (str.length() < leading.length()) {
+        pen.print(leading.substring(str.length()) + str);
+      } else {
+        pen.print(str.substring(0, leading.length()));
+      } // if/else
+
+      // Print an indication for the links it has.
+      for (int level = 0; level < current.next.size(); level++) {
+        pen.print("-*");
+      } // for
+      // Print an indication for the links it lacks.
+      for (int level = current.next.size(); level < this.height; level++) {
+        pen.print(" |");
+      } // for
+      pen.println();
+      printLinks(pen, leading);
+
+      current = current.next.get(0);
+    } // while
+   
+    // Print some O's at the start
+    pen.print(leading);
+    for (int level = 0; level < this.height; level++) {
+      pen.print(" O");
+    } // for
+    pen.println();
+
   } // dump(PrintWriter)
+
+
 
   // +---------+-----------------------------------------------------
   // | Helpers |
