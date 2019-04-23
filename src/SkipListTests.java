@@ -5,6 +5,7 @@ import java.util.Random;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import java.lang.Integer;
 
 /**
  * Some tests of skip lists.
@@ -235,7 +236,7 @@ public class SkipListTests {
     // Add a bunch of values
     for (int i = 0; i < 100; i++) {
       int rand = random.nextInt(1000);
-      set(rand);
+      set(Integer.valueOf(rand));
     } // for
     if (!inOrder(ints.keys())) {
       System.err.println("inOrder() failed in testOrdered()");
