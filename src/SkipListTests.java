@@ -6,10 +6,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import java.lang.Integer;
-<<<<<<< HEAD
 
-=======
->>>>>>> ffc6a028dfef09175f74ad3f8599c51bf09bbfb3
 /**
  * Some tests of skip lists.
  *
