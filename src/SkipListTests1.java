@@ -1,17 +1,18 @@
-import java.io.PrintWriter;
+//import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import java.lang.Integer;
 
 /**
  * Some tests of skip lists.
  *
  * @author Samuel A. Rebelsky
  */
-public class SkipListTests {
+public class SkipListTests1 {
 
   // +-----------+---------------------------------------------------
   // | Constants |
@@ -24,6 +25,7 @@ public class SkipListTests {
       {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
           "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
           "sixteen", "seventeen", "eighteen", "nineteen"};
+
   /**
    * An array of strings for tests
    */
@@ -75,6 +77,7 @@ public class SkipListTests {
     this.ints = new SkipList<Integer, String>((i, j) -> i - j);
     this.strings = new SkipList<String, String>((s, t) -> s.compareTo(t));
     this.operations = new ArrayList<String>();
+    System.err.println("SETUP"); 
   } // setup
 
   /**
@@ -150,20 +153,20 @@ public class SkipListTests {
   // +--------------------+
 
   /**
-   * Set an entry in the ints list.
+   * Add an integer to the ints list.
    */
   void set(Integer i) {
     operations.add("set(" + i + ");");
     ints.set(i, value(i));
-  } // set(Integer)
+  } // add
 
   /**
-   * Set an entry in the strings list.
+   * Add a string to the strings list.
    */
   void set(String str) {
     operations.add("set(\"" + str + "\");");
     strings.set(str, value(str));
-  } // set(String)
+  } // add(String)
 
   /**
    * Remove an integer from the ints list.
@@ -176,7 +179,7 @@ public class SkipListTests {
   /**
    * Remove a string from the strings list.
    */
-  void remove(String str) {
+  void add(String str) {
     operations.add("remove(\"" + str + "\");");
     strings.remove(str);
   } // remove(String)
@@ -225,6 +228,7 @@ public class SkipListTests {
     setup();
     assertFalse(strings.containsKey("hello"));
   } // emptyTest()
+  
   ///ADDED 23/4 
   @Test
   public void stringOrderTest() {
@@ -330,7 +334,7 @@ public class SkipListTests {
     // Add a bunch of values
     for (int i = 0; i < 100; i++) {
       int rand = random.nextInt(1000);
-      set(rand);
+      set(Integer.valueOf(rand));
     } // for
     if (!inOrder(ints.keys())) {
       System.err.println("inOrder() failed in testOrdered()");
@@ -416,7 +420,7 @@ public class SkipListTests {
   } // randomTest()
   
   public static void main(String[] args) {
-    SkipListTests slt = new SkipListTests();
+    SkipListTests1 slt = new SkipListTests1();
     slt.setup();
     slt.simpleTest();
   } // main
