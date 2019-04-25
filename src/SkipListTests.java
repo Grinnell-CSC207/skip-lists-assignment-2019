@@ -70,7 +70,6 @@ public class SkipListTests {
     this.ints = new SkipList<Integer, String>((i, j) -> i - j);
     this.strings = new SkipList<String, String>((s, t) -> s.compareTo(t));
     this.operations = new ArrayList<String>();
-    System.err.println("SETUP");
   } // setup
 
   /**
