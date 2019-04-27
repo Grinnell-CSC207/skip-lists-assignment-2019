@@ -91,26 +91,10 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
 		if (key == null) {
 			throw new NullPointerException("null key");
 		} else {
-			/*
-			 * ArrayList<SLNode<K, V>> currentPointer = this.front; // if the list is null,
-			 * skip to making a new node if (this.front.get(0) != null) { for (int i =
-			 * this.height - 1; i >= 0; i--) { // if this level has no other element, move
-			 * down if (currentPointer.get(i) == null) { System.out.println(i); continue; }
-			 * else { // K nextKey = currentPointer.get(i).key;
-			 * 
-			 * // while the next node is smaller keep moving at higher level while
-			 * (this.comparator.compare(currentPointer.get(i).key, key) < 0) {
-			 * currentPointer = currentPointer.get(i).next; } } } // when nextKey >= key //
-			 * if nextKey = key if (currentPointer.get(0) != null &&
-			 * this.comparator.compare(currentPointer.get(0).key, key) == 0) { V temp =
-			 * currentPointer.get(0).value; currentPointer.get(0).value = value; return
-			 * temp; } }
-			 * 
-			 */
 			// find the position we want
 			ArrayList<SLNode<K, V>> foundPtr = find(key);
 			// if the node we want do not exist
-			if (foundPtr.get(0) == null || comparator.compare(foundPtr.get(0).key, key) > 0) {
+			if (foundPtr.get(0) == null || comparator.compare(foundPtr.get(0).key, key) != 0) {
 				int newHeight = randomHeight();
 				SLNode<K, V> newNode = new SLNode<K, V>(key, value, newHeight);
 				if (newHeight > height) {
@@ -174,9 +158,22 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
 
 	@Override
 	public V remove(K key) {
-		// TODO Auto-generated method stub
-		return null;
-	} // remove(K)
+		// find the position we want
+				ArrayList<SLNode<K, V>> foundPtr = find(key);
+				// if node to remove does not exist, throw exception
+				if (foundPtr.get(0) == null || (comparator.compare(foundPtr.get(0).key, key) != 0)) {
+					throw new NoSuchElementException("No element with Key exists to remove");
+				}
+				// remove node
+				V valueToReturn = foundPtr.get(0).value;
+				for (int i = foundPtr.get(0).next.size() - 1; i >= 0; i--) {
+					// set pointers
+					foundPtr.set(i, foundPtr.get(i).next.get(i));
+				} // for
+				this.size--;
+				return valueToReturn;
+			} // remove(key)
+
 
 	@Override
 	public Iterator<K> keys() {
@@ -302,19 +299,24 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
 			return this.front;
 		}
 
+		ArrayList<SLNode<K, V>> update = new ArrayList<SLNode<K, V>>();
+		for (int i = 0; i < height; i++) {
+			update.add(null);
+		} 
+		
 		// current node ArrayList
 		ArrayList<SLNode<K, V>> currArrList = this.front;
 
 		// Iterate until the last level
 		for (int i = height - 1; i >= 0; i--) {
-			while (currArrList.get(i) != null && this.comparator.compare(currArrList.get(i).key, key) < 0) {
+			while (currArrList.get(i) != null && currArrList.get(i).next(i) != null
+					&& this.comparator.compare(currArrList.get(i).key, key) < 0) {
 				// update arraylist
-				for (int j = i; j >= 0; j--) {
-					currArrList.set(j, currArrList.get(j).next(j));
-				} // for
-			} // if
+					currArrList = currArrList.get(i).next;
+			} // while
+			update.set(i, currArrList.get(i));
 		} // for
-		return currArrList;
+		return update;
 	}
 
 } // class SkipList
